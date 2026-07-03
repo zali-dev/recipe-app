@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500&display=swap" rel="stylesheet" />
     <style>
-        /* --- все стили без изменений --- */
+        /* ----- CSS-переменные для тем ----- */
         :root {
             --bg-body: #f3efe9;
             --bg-app: rgba(245, 240, 234, 0.70);
@@ -504,6 +504,10 @@
             color: var(--btn-danger-text);
         }
 
+        /* ========================================
+           ИСПРАВЛЕННЫЕ МОДАЛЬНЫЕ ОКНА
+           ======================================== */
+
         .view-modal-overlay {
             position: fixed;
             inset: 0;
@@ -534,26 +538,41 @@
             max-width: 680px;
             width: 100%;
             max-height: 90vh;
-            overflow-y: auto;
             border: 1px solid var(--modal-border);
             box-shadow: 0 40px 80px rgba(0, 0, 0, 0.08);
             transform: scale(0.96) translateY(16px);
             transition: 0.3s ease;
+            overflow: hidden;
         }
 
         .view-modal-overlay.active .view-modal {
             transform: scale(1) translateY(0);
         }
 
-        .view-modal::-webkit-scrollbar {
+        .view-modal .view-content {
+            max-height: calc(90vh - 4.8rem);
+            overflow-y: auto;
+            padding-right: 20px;
+            margin-right: -20px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--input-border) transparent;
+        }
+
+        .view-modal .view-content::-webkit-scrollbar {
             width: 4px;
         }
-        .view-modal::-webkit-scrollbar-track {
+
+        .view-modal .view-content::-webkit-scrollbar-track {
             background: transparent;
         }
-        .view-modal::-webkit-scrollbar-thumb {
+
+        .view-modal .view-content::-webkit-scrollbar-thumb {
             background: var(--input-border);
             border-radius: 4px;
+        }
+
+        .view-modal .view-content::-webkit-scrollbar-thumb:hover {
+            background: var(--input-focus);
         }
 
         .view-modal .view-image {
@@ -689,26 +708,41 @@
             max-width: 600px;
             width: 100%;
             max-height: 90vh;
-            overflow-y: auto;
             border: 1px solid var(--modal-border);
             box-shadow: 0 40px 80px rgba(0, 0, 0, 0.04);
             transform: scale(0.96) translateY(16px);
             transition: 0.3s ease;
+            overflow: hidden;
         }
 
         .modal-overlay.active .modal {
             transform: scale(1) translateY(0);
         }
 
-        .modal::-webkit-scrollbar {
+        .modal .modal-content {
+            max-height: calc(90vh - 4.8rem);
+            overflow-y: auto;
+            padding-right: 20px;
+            margin-right: -20px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--input-border) transparent;
+        }
+
+        .modal .modal-content::-webkit-scrollbar {
             width: 4px;
         }
-        .modal::-webkit-scrollbar-track {
+
+        .modal .modal-content::-webkit-scrollbar-track {
             background: transparent;
         }
-        .modal::-webkit-scrollbar-thumb {
+
+        .modal .modal-content::-webkit-scrollbar-thumb {
             background: var(--input-border);
             border-radius: 4px;
+        }
+
+        .modal .modal-content::-webkit-scrollbar-thumb:hover {
+            background: var(--input-focus);
         }
 
         .modal h2 {
@@ -890,6 +924,12 @@
                 left: 20px;
                 max-width: none;
             }
+            .view-modal .view-content,
+            .modal .modal-content {
+                max-height: calc(90vh - 3.6rem);
+                padding-right: 12px;
+                margin-right: -12px;
+            }
         }
     </style>
 </head>
@@ -923,63 +963,69 @@
 
     <div class="notification" id="notification"></div>
 
+    <!-- Модальное окно просмотра -->
     <div class="view-modal-overlay" id="viewModalOverlay">
         <div class="view-modal">
-            <div class="view-image" id="viewImage"></div>
-            <div class="view-title" id="viewTitle"></div>
-            <div class="view-meta" id="viewMeta"></div>
-            <div class="view-section">
-                <h3>Ингредиенты</h3>
-                <div id="viewIngredients"></div>
-            </div>
-            <div class="view-section">
-                <h3>Инструкция приготовления</h3>
-                <div id="viewInstructions"></div>
-            </div>
-            <div class="view-actions">
-                <button class="btn btn-outline" id="closeViewBtn">Закрыть</button>
-                <button class="btn btn-edit" id="editFromViewBtn">Редактировать</button>
+            <div class="view-content">
+                <div class="view-image" id="viewImage"></div>
+                <div class="view-title" id="viewTitle"></div>
+                <div class="view-meta" id="viewMeta"></div>
+                <div class="view-section">
+                    <h3>Ингредиенты</h3>
+                    <div id="viewIngredients"></div>
+                </div>
+                <div class="view-section">
+                    <h3>Инструкция приготовления</h3>
+                    <div id="viewInstructions"></div>
+                </div>
+                <div class="view-actions">
+                    <button class="btn btn-outline" id="closeViewBtn">Закрыть</button>
+                    <button class="btn btn-edit" id="editFromViewBtn">Редактировать</button>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Модальное окно редактирования -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
-            <h2 id="modalTitle">Новый рецепт</h2>
-            <form id="recipeForm">
-                <div class="form-group">
-                    <label for="recipeName">Название блюда</label>
-                    <div class="form-group-with-button">
-                        <input type="text" id="recipeName" placeholder="Например, Паста карбонара" required />
-                        <button type="button" class="btn btn-generate" id="generateBtn">✨ Сгенерировать</button>
+            <div class="modal-content">
+                <h2 id="modalTitle">Новый рецепт</h2>
+                <form id="recipeForm">
+                    <div class="form-group">
+                        <label for="recipeName">Название блюда</label>
+                        <div class="form-group-with-button">
+                            <input type="text" id="recipeName" placeholder="Например, Паста карбонара" required />
+                            <button type="button" class="btn btn-generate" id="generateBtn">✨ Сгенерировать</button>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="recipeIngredients">Ингредиенты</label>
-                    <textarea id="recipeIngredients" placeholder="Спагетти, яйца, панчетта, пармезан..." required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="recipeInstructions">Инструкция (пошагово)</label>
-                    <textarea id="recipeInstructions" placeholder="1. Отварить спагетти...&#10;2. Обжарить панчетту..." required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="recipeCategory">Категория</label>
-                    <select id="recipeCategory">
-                        <option value="Завтрак">Завтрак</option>
-                        <option value="Обед" selected>Обед</option>
-                        <option value="Ужин">Ужин</option>
-                        <option value="Десерт">Десерт</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="recipeTime">Время приготовления (мин)</label>
-                    <input type="number" id="recipeTime" placeholder="30" min="1" value="30" required />
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-outline" id="cancelModalBtn">Отмена</button>
-                    <button type="submit" class="btn btn-primary" id="saveRecipeBtn">Сохранить</button>
-                </div>
-            </form>
+                    <div class="form-group">
+                        <label for="recipeIngredients">Ингредиенты</label>
+                        <textarea id="recipeIngredients" placeholder="Спагетти, яйца, панчетта, пармезан..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipeInstructions">Инструкция (пошагово)</label>
+                        <textarea id="recipeInstructions" placeholder="1. Отварить спагетти...&#10;2. Обжарить панчетту..." required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipeCategory">Категория</label>
+                        <select id="recipeCategory">
+                            <option value="Завтрак">Завтрак</option>
+                            <option value="Обед" selected>Обед</option>
+                            <option value="Ужин">Ужин</option>
+                            <option value="Десерт">Десерт</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipeTime">Время приготовления (мин)</label>
+                        <input type="number" id="recipeTime" placeholder="30" min="1" value="30" required />
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" id="cancelModalBtn">Отмена</button>
+                        <button type="submit" class="btn btn-primary" id="saveRecipeBtn">Сохранить</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -989,7 +1035,6 @@
             //   МОНСТРУОЗНАЯ БАЗА РЕЦЕПТОВ (200+)
             // ========================================
             const RECIPE_DB = {
-                // === СУПЫ ===
                 'борщ': {
                     ingredients: 'Свекла, капуста, картофель, морковь, лук, томатная паста, чеснок, зелень, соль, перец, уксус, лавровый лист',
                     instructions: '1. Нарезать свеклу соломкой и тушить с томатной пастой и уксусом.\n2. Нарезать картофель кубиками, капусту соломкой.\n3. В кипящую воду добавить картофель, через 10 минут — капусту.\n4. Обжарить лук и морковь, добавить к супу.\n5. Добавить тушеную свеклу, лавровый лист, соль, перец.\n6. Варить до готовности, добавить чеснок и зелень.\n7. Подавать со сметаной.',
@@ -1110,8 +1155,6 @@
                     category: 'Обед',
                     time: 20
                 },
-
-                // === ВТОРЫЕ БЛЮДА (МЯСО) ===
                 'плов': {
                     ingredients: 'Рис, баранина/говядина, морковь, лук, чеснок, зира, барбарис, соль, перец, растительное масло',
                     instructions: '1. Мясо нарезать кубиками, обжарить на масле до золотистости.\n2. Добавить нарезанный лук, обжарить до прозрачности.\n3. Добавить морковь соломкой, обжарить 5 минут.\n4. Залить водой, довести до кипения, добавить специи.\n5. Добавить промытый рис, разровнять, залить водой на 1 см выше риса.\n6. Варить на медленном огне 20 минут до готовности риса.\n7. Добавить чеснок, дать настояться 15 минут.',
@@ -1154,8 +1197,6 @@
                     category: 'Ужин',
                     time: 25
                 },
-
-                // === РЫБА ===
                 'лосось на гриле': {
                     ingredients: 'Филе лосося, лимон, соль, перец, оливковое масло, розмарин',
                     instructions: '1. Посолить и поперчить филе лосося.\n2. Сбрызнуть оливковым маслом.\n3. Обжарить на гриле или сковороде по 4-5 минут с каждой стороны.\n4. Подавать с долькой лимона и розмарином.',
@@ -1180,8 +1221,6 @@
                     category: 'Ужин',
                     time: 15
                 },
-
-                // === ПАСТА ===
                 'паста карбонара': {
                     ingredients: 'Спагетти, яйца, панчетта, пармезан, чеснок, оливковое масло, соль, перец',
                     instructions: '1. Отварить спагетти в подсоленной воде до состояния al dente.\n2. Обжарить панчетту с чесноком до золотистости.\n3. В отдельной миске взбить яйца с тертым пармезаном.\n4. Слить пасту, сохранив немного воды.\n5. Смешать горячую пасту с панчеттой, добавить яичную смесь и быстро перемешать.\n6. При необходимости добавить немного воды от пасты для кремовой текстуры.\n7. Подавать с дополнительной порцией пармезана и черным перцем.',
@@ -1218,8 +1257,6 @@
                     category: 'Ужин',
                     time: 55
                 },
-
-                // === КАРТОФЕЛЬ ===
                 'картофель по-деревенски': {
                     ingredients: 'Картофель, растительное масло, чеснок, соль, перец, паприка, зелень',
                     instructions: '1. Картофель тщательно вымыть, нарезать дольками вместе с кожурой.\n2. В миске смешать масло, измельченный чеснок, соль, перец и паприку.\n3. Добавить картофель, перемешать, чтобы каждый кусочек покрылся маслом.\n4. Выложить картофель на противень, застеленный пергаментом.\n5. Запекать при 200°C 30-35 минут до золотистой корочки.\n6. Подавать горячим, посыпав свежей зеленью.',
@@ -1268,8 +1305,6 @@
                     category: 'Завтрак',
                     time: 15
                 },
-
-                // === САЛАТЫ ===
                 'цезарь': {
                     ingredients: 'Куриная грудка, листья салата романо, пармезан, сухарики, чеснок, яйцо, оливковое масло, лимон, анчоусы, горчица',
                     instructions: '1. Обжарить куриную грудку до готовности, нарезать полосками.\n2. Приготовить соус: смешать желток, горчицу, лимонный сок, анчоусы и чеснок.\n3. Постепенно добавлять оливковое масло до получения эмульсии.\n4. В большой миске смешать листья салата с соусом.\n5. Добавить курицу, сухарики и натертый пармезан.\n6. Аккуратно перемешать и подавать сразу.',
@@ -1318,8 +1353,6 @@
                     category: 'Обед',
                     time: 15
                 },
-
-                // === ВЫПЕЧКА ===
                 'синнабон': {
                     ingredients: 'Мука, молоко, сливочное масло, сахар, дрожжи, яйцо, корица, сливочный сыр, сахарная пудра',
                     instructions: '1. В теплом молоке растворить дрожжи и сахар, оставить на 10 минут.\n2. Добавить яйцо, растопленное масло, муку и соль, замесить тесто.\n3. Оставить тесто в теплом месте на 1 час для подъема.\n4. Раскатать тесто в прямоугольник, смазать растопленным маслом.\n5. Посыпать корицей и сахаром, свернуть рулетом.\n6. Нарезать на кусочки толщиной 3 см.\n7. Выложить в форму, оставить на 30 минут для подъема.\n8. Выпекать при 180°C 20-25 минут до золотистого цвета.\n9. Смешать сливочный сыр с сахарной пудрой, смазать булочки.',
@@ -1374,8 +1407,6 @@
                     category: 'Десерт',
                     time: 70
                 },
-
-                // === ДЕСЕРТЫ ===
                 'брауни': {
                     ingredients: 'Темный шоколад, сливочное масло, яйца, сахар, мука, какао-порошок, соль, ваниль',
                     instructions: '1. Растопить шоколад с маслом на водяной бане.\n2. В отдельной миске взбить яйца с сахаром до пышности.\n3. Смешать растопленный шоколад с яичной смесью.\n4. Добавить муку, какао, соль и ваниль, аккуратно перемешать.\n5. Вылить в форму для выпечки (20x20 см).\n6. Выпекать при 180°C 25-30 минут.\n7. Дать полностью остыть перед нарезкой.',
@@ -1412,8 +1443,6 @@
                     category: 'Десерт',
                     time: 25
                 },
-
-                // === ЗАВТРАКИ ===
                 'омлет': {
                     ingredients: 'Яйца, молоко, сливочное масло, соль, перец, зелень',
                     instructions: '1. Взбить яйца с молоком, солью и перцем до однородности.\n2. Разогреть сковороду с маслом на среднем огне.\n3. Вылить яичную смесь и жарить 2-3 минуты до схватывания.\n4. Сложить омлет пополам лопаткой.\n5. Подавать горячим, посыпав свежей зеленью.',
@@ -1474,8 +1503,6 @@
                     category: 'Завтрак',
                     time: 15
                 },
-
-                // === ПИЦЦА ===
                 'пицца': {
                     ingredients: 'Мука, вода, дрожжи, оливковое масло, соль, сахар, томатный соус, сыр моцарелла, колбаса/пепперони, грибы, оливки, орегано',
                     instructions: '1. В теплой воде растворить дрожжи и сахар, оставить на 10 минут.\n2. Добавить муку, соль и оливковое масло, замесить тесто.\n3. Оставить тесто в теплом месте на 1 час для подъема.\n4. Раскатать тесто в круглую лепешку толщиной 0.5 см.\n5. Смазать томатным соусом.\n6. Выложить начинку: сыр, колбасу, грибы, оливки.\n7. Посыпать орегано и солью.\n8. Выпекать при 220°C 12-15 минут до золотистого цвета.',
@@ -1494,8 +1521,6 @@
                     category: 'Обед',
                     time: 35
                 },
-
-                // === НАПИТКИ ===
                 'кофе эспрессо': {
                     ingredients: 'Кофе молотый, вода',
                     instructions: '1. Смолоть зерна в мелкую пыль.\n2. Утрамбовать в холдер.\n3. Прогнать горячую воду (90°C) под давлением 9 бар.\n4. Наслаждаться свежим эспрессо.',
@@ -1553,14 +1578,12 @@
                 const normalized = query.toLowerCase().trim();
                 if (!normalized) return null;
 
-                // Точное совпадение
                 for (const [key, recipe] of Object.entries(RECIPE_DB)) {
                     if (normalized === key || key === normalized) {
                         return { ...recipe };
                     }
                 }
 
-                // Частичное совпадение
                 let bestMatch = null;
                 let bestScore = 0;
 
@@ -1573,7 +1596,6 @@
                         if (key.startsWith(word)) score += 3;
                         if (recipe.category && recipe.category.toLowerCase().includes(word)) score += 2;
                     }
-                    // Бонус за длину совпадения
                     if (normalized.length > 3 && key.includes(normalized.slice(0, 4))) score += 10;
                     if (key.includes(normalized)) score += 20;
 
@@ -1587,7 +1609,6 @@
                     return bestMatch;
                 }
 
-                // Если ничего не найдено — возвращаем null
                 return null;
             }
 
@@ -1899,7 +1920,6 @@
                 generateBtn.disabled = true;
                 generateBtn.innerHTML = '<span class="generating-indicator"></span> Поиск рецепта...';
 
-                // Имитация задержки для UX
                 setTimeout(() => {
                     const result = findRecipe(dishName);
 
@@ -1914,7 +1934,6 @@
                         showNotification('✅ Рецепт найден!', 'success');
                     } else {
                         showNotification('❌ Рецепт для "' + dishName + '" не найден. Попробуйте другое блюдо.', 'error');
-                        // Не очищаем поля, чтобы пользователь мог ввести другое название
                     }
 
                     isGenerating = false;
