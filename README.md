@@ -234,7 +234,7 @@ recipe-app/
 4. Подключите GitHub и выберите репозиторий.
 5. Нажмите **Apply** — деплой начнётся автоматически.
 
-🔗 **Живая демо-версия:** [https://recipe-app-owac.onrender.com/]
+🔗 **Живая демо-версия:** https://recipe-app-owac.onrender.com/
 
 ---
 
@@ -252,7 +252,7 @@ recipe-app/
 
 По вопросам и предложениям:
 
-**[z_cesi@outlook.com]**
+**z_cesi@outlook.com**
 
 ---
 
